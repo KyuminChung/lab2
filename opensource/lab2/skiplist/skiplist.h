@@ -44,6 +44,9 @@ public:
   std::vector<std::pair<int, std::string>>
   RangeScan(int start_key,
             int end_key) const;
+// memdb.cc에서 사용하는 helper 함수
+  bool GetLatestEntry(int key, RangeEntry* out_entry) const;
+  std::vector<RangeEntry> RangeScanEntries(int start_key, int end_key) const;
                                 
 private:
   //각 노드는 (key, seq, value, tombstone)
@@ -59,7 +62,7 @@ private:
 
   // 확률적으로 새 노드의 높이를 결정 > 평균적으로 O(log n) 탐색 성능
   int RandomLevel();
-
+  void InsertInternal(int key, const std::string& value, bool tombstone);
   // (key, seq) 이상인 첫 번째 노드를 찾기
   // update -> 각 레벨에서 삽입 직전 predecessor를 저장
   Node* FindGreaterOrEqual(int key, int64_t seq,
